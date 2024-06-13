@@ -1,3 +1,17 @@
+
+Link al repo: https://github.com/TomasArno/herencia
+
+
+# MODELO DE HERENCIA POR PROTOTIPOS o MODELO DE DELEGACION DE OBJETOS:
+
+Herencia: Capacidad de heredar propiedades y metodos de otras clases.
+
+
+
+
+
+
+
 <h1 align="center"> Herencia y Abstracción </h1>
 
 <img src="https://imgs.search.brave.com/5sfKICabF8knDE4s0eK_tNn4tubMJSKwIh6S-fU3BKg/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9zdGFj/a2lmeS5jb20vd3At/Y29udGVudC91cGxv/YWRzLzIwMTcvMTIv/T09QLUNvbmNlcHRz/LUluaGVyaXRhbmNl/LTg4MXg0NDEtMS5w/bmc" />

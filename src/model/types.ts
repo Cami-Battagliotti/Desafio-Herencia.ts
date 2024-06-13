@@ -17,15 +17,15 @@ interface UserData {
 interface TeacherData {
     username: string;
     password: string;
-    numSubjects: string[];
-    birthyear: number;
+    numberSubjectsTaught: number;
+    dateOfBirth: number;
 }
 
 interface StudentData {
     username: string;
     password: string;
-    numSubjects: string[];
-    birthyear: number;
+    numberSubjectsTaken: number;
+    dateOfBirth: number;
 }
 
 export { TeacherData, StudentData, FullUserData, UserData };
