@@ -1,31 +1,31 @@
-type Role = 'admin' | 'student' | 'teacher';
+type Role = "admin" | "student" | "teacher";
 
 interface FullUserData {
-    username: string;
-    password: string;
-    role: Role;
-    numSubjects: string[];
-    birthyear: number;
+  username: string;
+  password: string;
+  role: Role;
+  numSubjects: number;
+  birthyear: number;
 }
 
 interface UserData {
-    username: string;
-    password: string;
-    role: Role;
+  username: string;
+  password: string;
+  role: Role;
 }
 
 interface TeacherData {
-    username: string;
-    password: string;
-    numberSubjectsTaught: number;
-    dateOfBirth: number;
+  username: string;
+  password: string;
+  numSubjects: number;
+  birthyear: number;
 }
 
 interface StudentData {
-    username: string;
-    password: string;
-    numberSubjectsTaken: number;
-    dateOfBirth: number;
+  username: string;
+  password: string;
+  numSubjects: number;
+  birthyear: number;
 }
 
 export { TeacherData, StudentData, FullUserData, UserData };

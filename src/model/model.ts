@@ -1,156 +1,134 @@
-import DB from '../database/database.json';
-import jsonfile from 'jsonfile';
-import { randomUUID } from 'node:crypto';
-import { findUser } from './utils';
+import DB from "../database/database.json";
+import jsonfile from "jsonfile";
+import { randomUUID } from "node:crypto";
+import { findUser } from "./utils";
 
-import { FullUserData, UserData, TeacherData, StudentData } from './types';
+import { FullUserData, UserData, TeacherData, StudentData } from "./types";
 
-const PATH = './src/database/database.json';
+const PATH = "./src/database/database.json";
 
 class SuperClass {
-	username;
-	password;
-	id;
-	role;
+  username;
+  password;
+  id;
+  role;
 
-	constructor(userData: UserData) {
-		const { username, password, role } = userData;
+  constructor(userData: UserData) {
+    const { username, password, role } = userData;
 
-		this.username = username;
-		this.password = password;
-		this.role = role;
-		this.id = randomUUID();
-	}
+    this.username = username; //const username = userData.username, pero al desestructurar el objeto ahorramos escribir codigo.
+    this.password = password;
+    this.role = role;
+    this.id = randomUUID();
+  }
 
-	login(username: string, password: string) {
-		if (password !== this.password) return 'Wrong credentials';
-		// logica del login...
-		return 'User logged';
-	}
+  login(username: string, password: string) {
+    if (password !== this.password) return "Wrong credentials";
+    // logica del login...
+    return "User logged";
+  }
 
-	logout() {
-		return 'User logged out';
-	}
+  logout() {
+    return "User logged out";
+  }
 
-	changePassword(currentPassword: string, newPassword: string) {
-		if (currentPassword !== this.password) return 'Wrong credentials';
+  changePassword(currentPassword: string, newPassword: string) {
+    if (currentPassword !== this.password) return "Wrong credentials";
 
-		this.password = newPassword;
+    this.password = newPassword;
 
-		return 'Password changed';
-	}
+    return "Password changed";
+  }
 }
 
+//El operador extends trae los atributos y metodos de la superclase y los completa con lo que yo le pase por parametro en el constructor de esta clase hija:
+class AcademicProfile extends SuperClass {
+  // Defino los atributos particulares para esta clase y les asigno un tipo.
+  numSubjects: number;
+  birthyear: number;
 
-// atributos: numberSubjectsTaught, dateOfBirth y metodo: markingStudents()
-class Teacher extends SuperClass {		// El operador extends trae los atributos y metodos de la superclase y los completa con lo que yo le pase por parametro
-	numberSubjectsTaught: number		// Defino los atributos particulares para esta clase.
-	dateOfBirth: number					// Aca estoy tipando los atributos
+  // Defino el formato que tienen los parametros del constructor (nuevos atributos particulares de esta clase).
+  constructor(extraData: FullUserData) {
+    // Creo variables con el valor que tiene cada parametro:
+    const { numSubjects, birthyear } = extraData;
+    // Super() ejecuta el constructor de la clase padre:
+    super({
+      // Estos seran los parametros del constructor de la superclass:
+      username: extraData.username,
+      password: extraData.password,
+      role: extraData.role,
+    });
 
-	constructor(teacherData: TeacherData){ // Defino el formato que tienen los parametros del constructor
-		 // Creo variables con el valor que tiene cada parametro:
-		const {username, password, numberSubjectsTaught, dateOfBirth} = teacherData
-		super({username: username, password: password, role: "teacher"})// Super() ejecuta el constructor de la clase padre
-
-		this.numberSubjectsTaught = numberSubjectsTaught,
-		this.dateOfBirth = dateOfBirth
-	}
-
-	markingStudents(score: number): string {
-		return `The student ${this.id} got ${score}`;
-	}
-	
-} 
-
-class Student extends SuperClass {	// atributos: numberSubjectsTaken, dateOfBirth y metodo: enrolmentToSubjects ()
-	numberSubjectsTaken: number
-	dateOfBirth: number
-
-	constructor(studentData: StudentData){ // 1) constructor  2) super  3) inicializo los atributos 
-		const { username,password, numberSubjectsTaken, dateOfBirth } = studentData
-		super({username: username, password: password, role: "student"})
-
-		this.numberSubjectsTaken = numberSubjectsTaken,
-		this.dateOfBirth = dateOfBirth
-	}
-
-	enrolmentToSubjects (subjects: string[]): string {
-		return `The student ${this.id} is enrolled in ${subjects}`
-	}
+    this.numSubjects = numSubjects;
+    this.birthyear = birthyear;
+  }
 }
 
-class Administrator extends SuperClass {	//metodos: createNewSubjects(),changeAllPasswords(),changeAllNames(),registerStudents(),registerTeachers()
+class Professor extends AcademicProfile {
+  constructor(teacherData: TeacherData) {
+    super({
+      username: teacherData.username,
+      password: teacherData.password,
+      role: "teacher",
+      numSubjects: teacherData.numSubjects,
+      birthyear: teacherData.birthyear,
+    });
+  }
 
-	constructor(userData: UserData){
-		const { username, password } = userData
-		super({username: username, password: password, role: "admin"})
-	}
-
-	createNewSubjects(newSubjects: string[]):string{
-		return `These are the new subjects: ${newSubjects}`
-	}
-
-	changeAllPasswords(newPassword: string): string {
-		return `The entered password ${newPassword} is valid`
-	}
-
-	changeAllNames(newName: string): string {
-		return `Changes successfully completed. A new name has been assigned: ${newName}`
-	}
-
-	registerStudents(studentId: number): string{
-		return `The registration of a new student has been completed with the id: ${studentId}`
-	}
-
-	registerTeachers(teacherId: string): string {
-		return `A new teacher has been registered successfully with the Id: ${teacherId}`
-	}
+  rateStudent(studentId: string, score: number): string {
+    return `The student ${studentId} got ${score}/10`;
+  }
 }
 
+class Student extends AcademicProfile {
+  constructor(studentData: StudentData) {
+    super({
+      username: studentData.username, //Podria desestructurar el objeto studentData para no llamarlo por notacion de puntos.
+      password: studentData.password,
+      role: "student",
+      numSubjects: studentData.numSubjects,
+      birthyear: studentData.birthyear,
+    });
+  }
+  enrollToSubject(subject: string) {
+    return `The student ${this.username} is enrolled in: ${subject}`;
+  }
+}
 
-// Teacher {
-// 	username,
-// 	password, 
-// 	Id, 
-// 	role, 
-// 	numberSubjectsTaught,  ####
-// 	dateOfBirth,
-// 	markingStudents () => {},   ####
-// 	login () => {},
-// 	logout () => {},
-// 	changePassword () => {},	
-// }
+class Administrator extends SuperClass {
+  constructor(adminData: UserData) {
+    const { username, password } = adminData;
+    super({ username: username, password: password, role: "admin" });
+  }
 
+  createNewSubject(subjectName: string) {
+    return "Subject: " + subjectName + " created";
+  }
+  changeUserPassword(newPassword: string, userId: string) {
+    return `The password has been changed successfully`;
+  }
+  changeUserName(userId: string, newUserName: string) {
+    return `Changes successfully completed. A new name has been assigned: ${newUserName}`;
+  }
+  createNewUser(userData: TeacherData | StudentData) {
+    return `${userData.username} created`;
+  }
+}
 
+//ejemplos:
 
+const tomas = new Professor({
+  username: "tomas",
+  password: "sarasa",
+  numSubjects: 5,
+  birthyear: 1955,
+});
+tomas.rateStudent("xxx2", 8);
 
-// Student {
-// 	username,
-// 	password, 
-// 	Id, 
-// 	role, 
-// 	numberSubjectsTaken,  ####
-// 	dateOfBirth,
-// 	enrolmentToSubjects () => {},   ####   enrolling?
-// 	login () => {},
-// 	logout () => {},
-// 	changePassword () => {},
-	
-// }
-
-
-// Manager {
-// 	username,
-// 	password, 
-// 	Id, 
-// 	role, 
-//
-// 	createNewSubjects () => {},	####
-// 	login () => {},
-// 	logout () => {},
-// 	changeAllPasswords () => {},	####
-// 	changeAllNames () => {},	####
-//  registerStudents () => {},	####
-//  registerTeachers () => {},	####
-	
-// }
+const cami = new Student({
+  username: "cami",
+  password: "abc",
+  numSubjects: 2,
+  birthyear: 2000,
+});
+cami.enrollToSubject("Java");
